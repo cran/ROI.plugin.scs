@@ -1,9 +1,9 @@
-ff030a3193179a4c2af5b473bd1bd6aa *DESCRIPTION
+47b890c9bd59fa6d64edf8abf0e07228 *DESCRIPTION
 e70bc14d4a507f08a37dfe056c3cc8d9 *NAMESPACE
-22daba77d767d941e024963f9685cdd7 *R/plugin.R
+8214e612e405a4d9b7a700d9fe58b0eb *R/plugin.R
 888d1029c156ae66d4f6b5a7cd8b75da *R/status_codes.R
 0584542d7be723a09618580697e6feee *R/zzz.R
 b2c57c17bd2963da4e7ca2c44eaf50ab *man/Example_01.Rd
 900696932a2ef72469c8d9ce114b2b63 *man/Example_02.Rd
 9b712b233752ff1117acc87134d323de *man/Example_03.Rd
-f3115e9b431a10742f2e386fd0e72f35 *tests/test_scs.R
+c9e2cbf58151cf41932ef372f5961250 *tests/test_scs.R
