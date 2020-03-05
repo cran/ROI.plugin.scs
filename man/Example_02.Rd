@@ -10,7 +10,6 @@ Hock-Schittkowski-Collection \code{[HOCK]}.
 
 \references{
 \code{[HOCK]}  W. Hock, K. Schittkowski (1981): Test Examples for Nonlinear Programming Codes, Lecture Notes in Economics and Mathematical Systems, Vol. 187, Springer
-  \url{http://www.ai7.uni-bayreuth.de/tp_coll1.htm}
 }
 
 \examples{
