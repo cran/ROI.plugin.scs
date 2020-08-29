@@ -2,14 +2,14 @@
 \title{SOCP 2}
 \description{
 The following example is also known as \code{Problem 10} from the 
-Hock-Schittkowski-Collection \code{[HOCK]}.
+Hock-Schittkowski-Collection \code{Hock and Schittkowski (1981)}.
 
 \deqn{minimize \ \ x - y \\}
 \deqn{subject \ to \ \ -3 x^2 + 2 x y  + 1 \geq 0}
 }
 
 \references{
-\code{[HOCK]}  W. Hock, K. Schittkowski (1981): Test Examples for Nonlinear Programming Codes, Lecture Notes in Economics and Mathematical Systems, Vol. 187, Springer
+W. Hock, K. Schittkowski (1981): Test Examples for Nonlinear Programming Codes, Lecture Notes in Economics and Mathematical Systems, Vol. 187, Springer
 }
 
 \examples{
