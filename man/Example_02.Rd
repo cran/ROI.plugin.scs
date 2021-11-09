@@ -14,12 +14,15 @@ W. Hock, K. Schittkowski (1981): Test Examples for Nonlinear Programming Codes, 
 
 \examples{
 
+Sys.setenv("ROI_LOAD_PLUGINS" = FALSE)
 library(ROI)
+library(ROI.plugin.scs)
+
 obj <- L_objective(c(1, -1))
 L <- chol(rbind(c(3, -1), c(-1, 1)))
-con <- C_constraint(L = rbind(0, -L), cones = K_soc(3), rhs=c(1, 0, 0))
+con <- C_constraint(L = rbind(0, -L), cones = K_soc(3), rhs = c(1, 0, 0))
 op <- OP(objective = obj, constraints = con, 
-         bounds = V_bound(li=1:2, lb=rep(-Inf, 2)))
+         bounds = V_bound(li = 1:2, lb = rep(-Inf, 2)))
 x <- ROI_solve(op, solver="scs")
 x
 ## Optimal solution found.

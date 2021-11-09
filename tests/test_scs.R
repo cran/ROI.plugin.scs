@@ -1,6 +1,8 @@
+if (isTRUE(Sys.getenv("_R_ROI_NO_CHECK_SOLVERS_") == "")) {
+    Sys.setenv("ROI_LOAD_PLUGINS" = FALSE)
+}
 library(ROI)
 library(ROI.plugin.scs)
-
 
 check <- function(domain, condition, level=1, message="", call=sys.call(-1L)) {
     if ( isTRUE(condition) ) return(invisible(NULL))
@@ -85,7 +87,7 @@ test_cp_03 <- function(solver) {
     x <- OP(objective = obj, constraints = lc)
 
     opt <- ROI_solve(x, solver = solver)
-    check("CP-03@01", equal(opt$solution , c(1, 2, 2*exp(1/2))))
+    check("CP-03@01", max(abs(opt$solution - c(1, 2, 2*exp(1/2)))) < 1e-3)
 }
 
 ## EXPP - Example - 2
@@ -220,7 +222,7 @@ test_cp_08 <- function(solver) {
             types = rep("C", 3), maximum = TRUE)
 
     opt <- ROI_solve(x, solver=solver)
-    check("CP-08@01", equal(opt$solution, c(2, 2, 4)))
+    check("CP-08@01", equal(opt$solution, c(2, 2, 4), tol = 1e-4))
 }
 
 ## The following example is from the cvxopt documentation and released under GPL-3
@@ -266,7 +268,7 @@ test_cp_09 <- function(solver) {
     ## NOTE: The solutions I compare with are from cvxopt where I used the default settings,
     ##       therefore it is possible that scs just provides a solution with a smaler eps
     sol <- c(-0.367666090041563, 1.89832827158511, -0.887550426343585)
-    check("CP-09@01", isTRUE(c(obj %*% solution(opt)) <= c(obj %*% sol)))
+    check("CP-09@01", equal(solution(opt, "objval"), drop(obj %*% sol)))
     
     ## solution from cvxopt
     ## [-3.68e-01 1.90e+00 -8.88e-01]
@@ -292,7 +294,7 @@ test_cp_09 <- function(solver) {
                    -0.00240909203896524, 0.000104021271556218, -0.00104543254168053,  
                     0.0242146296992217, -0.00104543254168053,   0.0105078600239678)
     opt_sol_psd_2 <- as.numeric(as.matrix(solution(opt, "psd")[[2]]))
-    check("CP-09@04", isTRUE(sum(abs(opt_sol_psd_2 - sol_psd_2)) < 1e-5))
+    check("CP-09@04", isTRUE(max(abs(opt_sol_psd_2 - sol_psd_2)) < 1e-4))
 }
 
 

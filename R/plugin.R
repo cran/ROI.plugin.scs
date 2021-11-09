@@ -122,46 +122,6 @@ to_dense_vector <- function(x, len) {
     return(y)
 }
 
-check_cone_types <- function(x) {
-    b = !( x %in% c("free", "nonneg", "soc", "psd", "expp", "expd", "powp", "powd") )
-    if ( any(b) ) stop("SCS doesn't support cones of type ",
-                       paste(shQuote(x[b]), collapse=" or "), "!")
-    invisible(NULL)
-}
-
-get_mapping <- function() {
-    setNames(c("f", "l", "q", "s", "ep", "ed", "p", "p"), 
-             c("free", "nonneg", "soc", "psd", "expp", "expd", "powp", "powd"))
-}
-
-build_cone_dims <- function( roi_cones ) {
-    map <- get_mapping()
-    
-    ## check if ecos supports the provided cone types
-    check_cone_types( names(roi_cones) )
-
-    cone_dims <- list()
-    for (cone in c("free", "nonneg", "expp", "expd")) {
-        ## NOTE: ("expp", "expd") since the dimension is know the data structure is more 
-        ##       compressed than for soc or psd! list(c(1, 2, 3), c(4, 5, 6)) translates to c(2)
-        if ( length(roi_cones[[cone]]) > 0 ) cone_dims[[map[cone]]] <- length( roi_cones[[cone]] )
-    }
-    if ( length(roi_cones[["soc"]]) > 0 ) {
-        cone_dims[[map["soc"]]] <- sapply(roi_cones[["soc"]], length)
-    }
-    if ( length(roi_cones[["psd"]]) > 0) {
-        cone_dims[[map["psd"]]] <- sapply(roi_cones[["psd"]], function(x) calc_psd_matrix_dim(length(x)))
-    }
-    if ( length(roi_cones[["powp"]])  > 0 ) {
-        cone_dims[[map["powp"]]] <- sapply(roi_cones[["powp"]], "[[", "a")
-    }
-    if ( length(roi_cones[["powd"]]) > 0 ) {
-        cone_dims[[map["powd"]]] <- c( cone_dims[[map["powp"]]], 
-                                     -sapply(roi_cones[["powd"]], "[[", "a") )
-    }
-    cone_dims
-}
-
 calc_expp_dims <- function(x) {
     y <- x$id[x$cone == scs_cones['expp']]
     if ( !length(y) )
@@ -206,7 +166,7 @@ calc_pow_dims <- function(x) {
 
 calc_dims <- function(cones) {
     dims <- list()
-    dims$f <- sum(cones$cone == scs_cones["zero"])
+    dims$z <- sum(cones$cone == scs_cones["zero"])
     dims$l <- sum(cones$cone == scs_cones["nonneg"])
     dims$ep <- calc_expp_dims(cones)
     dims$ed <- calc_expd_dims(cones)
@@ -310,7 +270,7 @@ solve_OP <- function(x, control = list()) {
     }
 
     if ( is.null(control$verbose) ) control$verbose <- FALSE
-    if ( is.null(control$eps) ) control$eps <- 1e-6
+    if ( is.null(control$eps_rel) ) control$eps_rel <- 1e-6
 
     solver_call <- list(scs, A = A, b = A.rhs, obj = obj, 
                         cone = dims, control = control)
@@ -322,15 +282,17 @@ solve_OP <- function(x, control = list()) {
     out$len_objective <- length(objective(x))
     out$len_dual_objective <- nrow(constraints(x))
 
-    if ( "s" %in% names(dims)  ) {
+    if ( "s" %in% names(dims) ) {
         out$psd <- lapply(roi_cones, function(j) unvech(out$y[j]))
     } else {
-        sdp <- NULL
+        out$psd <- NULL
     }
     optimum <- (-1)^x$maximum * tryCatch({as.numeric(out$x %*% obj)}, error=function(e) as.numeric(NA))
-    ROI_plugin_canonicalize_solution( solution = out$x,  optimum  = optimum,
-                                       status   = out[["info"]][["statusVal"]],
-                                       solver   = "scs", message  = out )
+    ROI_plugin_canonicalize_solution(solution = out$x,
+                                     optimum  = optimum,
+                                     status   = out[["info"]][["status_val"]],
+                                     solver   = "scs",
+                                     message  = out)
 }
 
 ROI_plugin_solution_dual.scs_solution <- function(x) {

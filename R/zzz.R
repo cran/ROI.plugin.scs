@@ -14,13 +14,22 @@ make_SCS_signatures <- function()
     ## SCS
     ROI_plugin_register_solver_control( solver, "verbose", "verbose" )
     ROI_plugin_register_solver_control( solver, "max_iters", "max_iter" )
-    ROI_plugin_register_solver_control( solver, "eps", "tol" )
+    ROI_plugin_register_solver_control( solver, "eps_rel", "tol" )
 
-    ROI_plugin_register_solver_control( solver, "normalize", "X" )
-    ROI_plugin_register_solver_control( solver, "cg_rate", "X" )
-    ROI_plugin_register_solver_control( solver, "scale", "X" )
-    ROI_plugin_register_solver_control( solver, "rho_x", "X" )
+    ROI_plugin_register_solver_control( solver, "eps_abs", "X" )
+    ROI_plugin_register_solver_control( solver, "eps_infeas", "X" )
     ROI_plugin_register_solver_control( solver, "alpha", "X" )
+    ROI_plugin_register_solver_control( solver, "rho_x", "X" )
+    ROI_plugin_register_solver_control( solver, "scale", "X" )
+    ROI_plugin_register_solver_control( solver, "normalize", "X" )
+    ROI_plugin_register_solver_control( solver, "warm_start", "X" )
+    ROI_plugin_register_solver_control( solver, "acceleration_lookback", "X" )
+    ROI_plugin_register_solver_control( solver, "acceleration_interval", "X" )
+    ROI_plugin_register_solver_control( solver, "adaptive_scale", "X" )
+    ROI_plugin_register_solver_control( solver, "write_data_filename", "X" )
+    ROI_plugin_register_solver_control( solver, "log_csv_filename", "X" )
+    ROI_plugin_register_solver_control( solver, "time_limit_secs", "X" )
+    
     invisible( TRUE )
 }
 
