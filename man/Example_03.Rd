@@ -1,4 +1,5 @@
 \name{Example-3}
+\alias{Example-3}
 \title{SOCP 3}
 \description{
 The following example is originally from the \code{CVXOPT} 

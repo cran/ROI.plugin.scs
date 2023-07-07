@@ -1,4 +1,5 @@
 \name{Example-1}
+\alias{Example-1}
 \title{SOCP 1}
 
 \description{

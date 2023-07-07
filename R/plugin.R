@@ -185,10 +185,6 @@ which_scs_default_lower_bounds <- function(lower_bounds) {
     return(NULL)
 }
 
-as.bound <- function( x, ... ) UseMethod( "as.bound" )
-as.bound.bound <- identity
-as.bound.NULL <- function( x, ... ) structure(list(), class="bound")
-
 ## get the indices of the conic bounds which are not the free cone
 get_indizes_nonfree <- function(bo) {
     if ( is.null(bo) )

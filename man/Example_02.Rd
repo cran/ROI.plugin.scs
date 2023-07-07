@@ -1,4 +1,5 @@
 \name{Example-2}
+\alias{Example-2}
 \title{SOCP 2}
 \description{
 The following example is also known as \code{Problem 10} from the 
