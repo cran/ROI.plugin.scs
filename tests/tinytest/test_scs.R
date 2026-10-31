@@ -4,13 +4,6 @@ if (isTRUE(Sys.getenv("_R_ROI_NO_CHECK_SOLVERS_") == "")) {
 library(ROI)
 library(ROI.plugin.scs)
 
-check <- function(domain, condition, level=1, message="", call=sys.call(-1L)) {
-    if ( isTRUE(condition) ) return(invisible(NULL))
-    msg <- sprintf("in %s", domain)
-    if ( all(nchar(message) > 0) ) msg <- sprintf("%s\n\t%s", msg, message)
-    stop(msg)
-    return(invisible(NULL))
-}
 
 
 ## SOCP - Example - 1
@@ -28,16 +21,16 @@ test_cp_01 <- function(solver) {
 
     bound <- V_bound(li = 1:3, lb = rep(-Inf, 3))
 
-    lc <- C_constraint(L = rbind(A, G), 
+    lc <- C_constraint(L = rbind(A, G),
                        cones = c(K_zero(1), K_soc(3)), 
                        rhs = c(b, h))
     x <- OP(objective = obj, constraints = lc, types = rep("C", 3),
             bounds =  bound, maximum = FALSE)
 
-    opt <- ROI_solve(x, solver = solver)
+    opt <- ROI_solve(x, solver = solver, eps_abs = 1e-5)
     
-    check("CP-01@01", equal(sum(abs(opt$solution - c(sqrt(2), -1, -1))), 0))
-    check("CP-01@02", equal(opt$objval, (sqrt(2) - 2)))
+    expect_true(equal(sum(abs(opt$solution - c(sqrt(2), -1, -1))), 0), info = "CP-01@01")
+    expect_true(equal(opt$objval, (sqrt(2) - 2)), info = "CP-01@02")
 }
 
 ## SOCP - Example - 2
@@ -62,7 +55,7 @@ test_cp_02 <- function(solver) {
     x <- OP(objective = obj, constraints = lc)
 
     opt <- ROI_solve(x, solver=solver)
-    check("CP-02@01", equal(sum(abs(opt$solution - c(sqrt(2), 1, 1, sqrt(2), 1, 1))), 0))
+    expect_true(equal(sum(abs(opt$solution - c(sqrt(2), 1, 1, sqrt(2), 1, 1))), 0), info = "CP-02@01")
 }
 
 ## EXPP - Example - 1
@@ -87,7 +80,7 @@ test_cp_03 <- function(solver) {
     x <- OP(objective = obj, constraints = lc)
 
     opt <- ROI_solve(x, solver = solver)
-    check("CP-03@01", max(abs(opt$solution - c(1, 2, 2*exp(1/2)))) < 1e-3)
+    expect_true(max(abs(opt$solution - c(1, 2, 2*exp(1/2)))) < 1e-3, info = "CP-03@01")
 }
 
 ## EXPP - Example - 2
@@ -112,7 +105,7 @@ test_cp_04 <- function(solver) {
     x <- OP(objective = obj, constraints = lc, maximum = TRUE)
 
     opt <- ROI_solve(x, solver=solver)
-    check("CP-04@01", equal(opt$solution , c(1, 2, 2*exp(1/2))))
+    expect_true(equal(opt$solution , c(1, 2, 2*exp(1/2))), info = "CP-04@01")
 }
 
 ## EXPP - Example - 3
@@ -140,7 +133,7 @@ test_cp_05 <- function(solver) {
             types = rep("C", 3), maximum = TRUE)
 
     opt <- ROI_solve(x, solver = solver)
-    check("CP-05@01", equal(opt$solution , c(1, 1, exp(1))))
+    expect_true(equal(opt$solution , c(1, 1, exp(1))), info = "CP-05@01")
 }
 
 ## EXPD - Example - 1
@@ -165,7 +158,7 @@ test_cp_06 <- function(solver) {
 
     opt <- ROI_solve(x, solver=solver)
 
-    check("CP-06@01", equal(opt$solution , c(-1, 1, exp(-2))))
+    expect_true(equal(opt$solution , c(-1, 1, exp(-2))), info = "CP-06@01")
 }
 
 ## POWP - Example - 1
@@ -192,8 +185,8 @@ test_cp_07 <- function(solver) {
             types = rep("C", 3), maximum = TRUE)
 
     opt <- ROI_solve(x, solver=solver)
-    check("CP-07@01", equal(opt$solution, c(4, 4, 4)))
-    check("CP-07@02", equal(opt$objval, 12 ))
+    expect_true(equal(opt$solution, c(4, 4, 4)), info = "CP-07@01")
+    expect_true(equal(opt$objval, 12 ), info = "CP-07@02")
 }
 
 ## POWD - Example - 1
@@ -222,7 +215,7 @@ test_cp_08 <- function(solver) {
             types = rep("C", 3), maximum = TRUE)
 
     opt <- ROI_solve(x, solver=solver)
-    check("CP-08@01", equal(opt$solution, c(2, 2, 4), tol = 1e-4))
+    expect_true(equal(opt$solution, c(2, 2, 4), tol = 1e-4), info = "CP-08@01")
 }
 
 ## The following example is from the cvxopt documentation and released under GPL-3
@@ -234,7 +227,7 @@ test_cp_08 <- function(solver) {
 
 ## SDP - Example - 1
 ## for the example definition see ROI.plugin.scs inst/doc
-## or http://cvxopt.org/userguide/coneprog.html
+## or https://cvxopt.org/userguide/coneprog.html
 test_cp_09 <- function(solver) {
     ## this function or something similar should go into ROI
     obj <- c(1, -1, 1)
@@ -268,12 +261,12 @@ test_cp_09 <- function(solver) {
     ## NOTE: The solutions I compare with are from cvxopt where I used the default settings,
     ##       therefore it is possible that scs just provides a solution with a smaler eps
     sol <- c(-0.367666090041563, 1.89832827158511, -0.887550426343585)
-    check("CP-09@01", equal(solution(opt, "objval"), drop(obj %*% sol)))
+    expect_true(equal(solution(opt, "objval"), drop(obj %*% sol)), info = "CP-09@01")
     
     ## solution from cvxopt
     ## [-3.68e-01 1.90e+00 -8.88e-01]
     ## or c(-0.367666090041563, 1.89832827158511, -0.887550426343585)
-    check("CP-09@02", isTRUE(sum(abs(solution(opt) - sol)) < 1e-3))
+    expect_true(isTRUE(sum(abs(solution(opt) - sol)) < 1e-3), info = "CP-09@02")
 
     ## [ 3.96e-03 -4.34e-03]
     ## [-4.34e-03  4.75e-03]
@@ -282,7 +275,7 @@ test_cp_09 <- function(solver) {
                    -0.00433836779348354,  0.00475162592559036)
 
     opt_sol_psd_1 <- as.numeric(as.matrix(solution(opt, "psd")[[1]]))
-    check("CP-09@03", isTRUE(sum(abs(opt_sol_psd_1 - sol_psd_1)) < 1e-5))
+    expect_true(isTRUE(sum(abs(opt_sol_psd_1 - sol_psd_1)) < 1e-5), info = "CP-09@03")
     
     ## [ 5.58e-02 -2.41e-03  2.42e-02]
     ## [-2.41e-03  1.04e-04 -1.05e-03]
@@ -294,24 +287,16 @@ test_cp_09 <- function(solver) {
                    -0.00240909203896524, 0.000104021271556218, -0.00104543254168053,  
                     0.0242146296992217, -0.00104543254168053,   0.0105078600239678)
     opt_sol_psd_2 <- as.numeric(as.matrix(solution(opt, "psd")[[2]]))
-    check("CP-09@04", isTRUE(max(abs(opt_sol_psd_2 - sol_psd_2)) < 1e-4))
+    expect_true(isTRUE(max(abs(opt_sol_psd_2 - sol_psd_2)) < 1e-4), info = "CP-09@04")
 }
 
 
-if ( !any("scs" %in% names(ROI_registered_solvers())) ) {
-    ## This should never happen.
-    cat("ROI.plugin.scs cloud not be found among the registered solvers.\n")
-} else {
-    print("Start Testing!")
-    local({test_cp_01("scs")})
-    local({test_cp_02("scs")})
-    local({test_cp_03("scs")})
-    local({test_cp_04("scs")})
-    local({test_cp_05("scs")})
-    local({test_cp_06("scs")})
-    local({test_cp_07("scs")})
-    local({test_cp_08("scs")})
-    if ( ! grepl("SunOS", Sys.info()["sysname"]) ) {
-        local({test_cp_09("scs")})
-    }
-}
+test_cp_01("scs")
+test_cp_02("scs")
+test_cp_03("scs")
+test_cp_04("scs")
+test_cp_05("scs")
+test_cp_06("scs")
+test_cp_07("scs")
+test_cp_08("scs")
+if ( !grepl("SunOS", Sys.info()["sysname"]) ) test_cp_09("scs")

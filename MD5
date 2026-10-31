@@ -1,9 +1,12 @@
-796e1d1f103d5e25d2bcc9fd01c012ac *DESCRIPTION
+f21acc9c4f1e1c7a2dcb54e47b9a8747 *DESCRIPTION
 8d646296543eb6725f088f44ffce22e1 *NAMESPACE
-b70ac436192eca2583b6f2fea58ac761 *R/plugin.R
+5ffc131a7e7d11b32a46a6ba927ce40d *R/plugin.R
 888d1029c156ae66d4f6b5a7cd8b75da *R/status_codes.R
 d378c280aa1886abe6dec46e2afd75db *R/zzz.R
 0faaf3022c3ceaab72b03003c0e168c8 *man/Example_01.Rd
 239d0edc5b3d8f3b3566f18a754e2565 *man/Example_02.Rd
-94b25eb879359c8d4d03d676283651dc *man/Example_03.Rd
-da0976f43775a59d0674cd8ac1f2786d *tests/test_scs.R
+0388f4af2dd9364b494acdd631ccc6fb *man/Example_03.Rd
+4f84501c617fded354c4eec95e2a60dd *tests/tinytest.R
+228133a673a8caf87eaee06f8267f524 *tests/tinytest/test_no_psd_scaling.R
+42cc73598484cd3448a9a16ac5c9cbd8 *tests/tinytest/test_pow_order.R
+2b2f637ad52cd97db96468ca218f414d *tests/tinytest/test_scs.R

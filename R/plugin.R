@@ -153,11 +153,11 @@ calc_psd_dims <- function(x) {
 
 calc_pow_dims <- function(x) {
     powp <- powd <- NULL
-    ids <- unique(x$id[x$cone == scs_cones['powp']])
+    ids <- sort(unique(x$id[x$cone == scs_cones['powp']]))
     if ( length(ids) )
         powp <- sapply(as.character(ids), function(id) x$params[[id]]['a'], USE.NAMES = FALSE)
 
-    ids <- unique(x$id[x$cone == scs_cones['powd']])
+    ids <- sort(unique(x$id[x$cone == scs_cones['powd']]))
     if ( length(ids) )
         powd <- sapply(as.character(ids), function(id) -x$params[[id]]['a'], USE.NAMES = FALSE)
 
@@ -246,17 +246,17 @@ solve_OP <- function(x, control = list()) {
         ordered_cones <- list(cone = cones$cone[i], id = cones$id[i])
         A <- A[i,]
         A.rhs <- A.rhs[i]
-        dims <- calc_dims(cones)
-    } else {
-        dims <- calc_dims(cones)
-    }    
+        
+    }
+    dims <- calc_dims(cones)
 
     ## The NO_PSD_SCALING mode is only for testing purposes
-    if ( !is.null(dims$s) & is.null(control$NO_PSD_SCALING) ) {
+    if ( !is.null(dims$s) ) {
         psd_j <- list()
         b <- ordered_cones$cone == scs_cones["psd"]
         roi_cones <- split(seq_along(ordered_cones$cone)[b], ordered_cones$id[b])
         for ( i in seq_along(roi_cones) ) {
+            if ( !is.null(control$NO_PSD_SCALING) ) break
             psd_dim <- dims$s[i]
             psd_j[[i]] <- roi_cones[[i]][scale_which( psd_dim )]
             k <- A$i %in% psd_j[[i]]
